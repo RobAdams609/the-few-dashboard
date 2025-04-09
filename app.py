@@ -2,9 +2,9 @@ import streamlit as st
 import pandas as pd
 
 # Load data
-weekly_data = pd.read_csv("data/weekly_submitted.csv")
-activity_data = pd.read_csv("data/agent_activity.csv")
-ytd_data = pd.read_csv("data/ytd_data.csv")
+weekly_data = pd.read_csv("weekly_submitted.csv")
+activity_data = pd.read_csv("agent_activity.csv")
+ytd_data = pd.read_csv("ytd_data.csv")
 
 st.set_page_config(page_title="THE FEW Dashboard", layout="wide")
 st.title("🔥 THE FEW | Sales Performance Dashboard")
