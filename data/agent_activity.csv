@@ -1,14 +1,50 @@
-Agent,Leads_Purchased,Leads_Sold,Talk_Time_Minutes,Close_Rate_%
-Eli Thermilus,233,22,340,9.44206008583691
-Philip Baxter,360,18,310,5.0
-Michelle Landis,37,0,0,0.0
-Robert Adams,516,26,597,5.038759689922481
-Anthony Otero,92,0,214,0.0
-Anna Gleason,245,16,1114,6.530612244897959
-Marie Saint Cyr,185,8,2139,4.324324324324325
-Fraitzline Gustave,396,3,1076,0.7575757575757576
-Kadin Whatley,5,0,0,0.0
-Joseph Lipari,250,4,212,1.6
-Alrens Antoine,0,0,0,
-F N,359,20,180,5.571030640668524
-A S,353,21,121,5.94900849858357
+import streamlit as st
+import pandas as pd
+from PIL import Image
+import os
+
+# Load agent activity data
+df = pd.read_csv("data/agent_activity.csv")
+
+# Define a mapping from agent names to image filenames
+image_dir = "data"
+headshot_map = {
+    "Robert Adams": "Rob_Adams.png",
+    "Ajani Senior": "Ajani_Senior.jpeg",
+    "Fabricio Navarrete": "Fabricio_Navarrete.jpeg",
+    "Michelle Landis": "Michelle_Landis.jpeg",
+    "Philip Baxter": "Philip_Baxter.jpeg",
+    "Kadin Whatley": "Kadin_Whatley.jpeg",
+    "Eli Thermilus": "Eli_Thermilus.png",
+    "Alrens Antoine": "Alrens_Antoine.png",
+    "Joseph Lipari": "Joseph_Lipari.jpeg",
+    "Anna Gleason": "Anna_Gleason.jpeg",
+    "Marie Saint Cyr": "Marie_Saint_Cyr.jpeg",
+    "A S": "Ajani_Senior.jpeg",  # alias
+    "F N": "Fabricio_Navarrete.jpeg",  # alias
+    "A C": None,  # no image
+    "T S": "Tyler_Sergi.png",  # if present
+    "J L": "Joseph_Lipari.jpeg",  # alias
+    "M L": "Michelle_Landis.jpeg",  # alias
+}
+
+# Build HTML rows with images or initials
+def build_agent_row(agent_name):
+    img_path = headshot_map.get(agent_name)
+    if img_path:
+        img_full_path = os.path.join(image_dir, img_path)
+        if os.path.exists(img_full_path):
+            return f"<img src='data/{img_path}' width='40' style='border-radius: 50%; margin-right: 10px;'> {agent_name}"
+    initials = "".join([x[0] for x in agent_name.split()[:2]]).upper()
+    return f"<div style='width:40px;height:40px;background-color:#222;color:white;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-right:10px;'>{initials}</div> {agent_name}"
+
+# Create display copy of the DataFrame
+df_display = df.copy()
+df_display["Agent"] = df_display["Agent"].apply(build_agent_row)
+
+# Display with styling
+st.markdown("### 📞 Agent Activity & Close Rates")
+st.write(
+    df_display.to_html(escape=False, index=False),
+    unsafe_allow_html=True
+)
